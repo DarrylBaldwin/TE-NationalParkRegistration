@@ -10,7 +10,7 @@ namespace dao_exercises.DAL
     {
         private string connectionString;
         private const string SQL_GetDepartments = "SELECT * FROM department";
-        private const string SQL_CheckDepartment = "SELECT id FROM department WHERE name = @newDepartment;";
+        private const string SQL_UpdateDepartment = @"UPDATE department SET name = (@name) WHERE department_id = (@department_id)";
         private const string SQL_CreateDepartment = @"INSERT INTO department (name) VALUES (@name)";
 
         // Single Parameter Constructor
@@ -44,7 +44,7 @@ namespace dao_exercises.DAL
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -84,6 +84,7 @@ namespace dao_exercises.DAL
                     //{
                     //    newDepartment.Id = Convert.ToInt32(reader["department_id"]);
                     //}
+                    //result = newDepartment.Id;
                 }
             }
             catch (Exception ex)
@@ -99,11 +100,37 @@ namespace dao_exercises.DAL
         /// <summary>
         /// Updates an existing department.
         /// </summary>
-        /// <param name="updatedDepartment">The department object.</param>
+        ///// <param name="updatedDepartment">The department object.</param>
         /// <returns>True, if successful.</returns>
         public bool UpdateDepartment(Department updatedDepartment)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_UpdateDepartment, conn);
+                    cmd.Parameters.AddWithValue("@department_id", updatedDepartment.Id);
+                    cmd.Parameters.AddWithValue("@name", updatedDepartment.Name);
+
+                    int count = cmd.ExecuteNonQuery();
+
+                    if (count > 0)
+                    {
+                        result = true;
+                    }
+                }
+
+
+            }
+            catch (SqlException ex)
+            {
+
+                throw;
+            }
+            return result;
         }
 
     }
