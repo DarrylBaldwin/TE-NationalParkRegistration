@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using dao_exercises.Models;
+using System.Data.SqlClient;
+
 
 namespace dao_exercises.DAL
 {
