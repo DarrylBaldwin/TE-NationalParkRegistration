@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Text;
 using dao_exercises.Models;
 
@@ -8,6 +9,9 @@ namespace dao_exercises.DAL
     class EmployeeSqlDAL
     {
         private string connectionString;
+        private const string SQL_GetEmployees = "SELECT * FROM employee";
+        private const string SQL_FindEmployees = "SELECT * FROM employee WHERE first_name LIKE @firstname AND last_name LIKE @lastname";
+        private const string SQL_EmployeesNoProjects = "SELECT * FROM project_employee RIGHT JOIN employee ON employee.employee_id = project_employee.employee_id WHERE @project_employee.project_id IS NULL";
 
         // Single Parameter Constructor
         public EmployeeSqlDAL(string dbConnectionString)
@@ -21,7 +25,36 @@ namespace dao_exercises.DAL
         /// <returns>A list of all employees.</returns>
         public IList<Employee> GetAllEmployees()
         {
-            throw new NotImplementedException();
+            List<Employee> result = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand(SQL_GetEmployees, connection);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee tempemployee = new Employee();
+                        tempemployee.EmployeeId = Convert.ToInt32(reader["employee_id"]);
+                        tempemployee.FirstName = Convert.ToString(reader["first_name"]);
+                        tempemployee.LastName = Convert.ToString(reader["last_name"]);
+                        tempemployee.JobTitle = Convert.ToString(reader["job_title"]);
+                        tempemployee.Gender = Convert.ToString(reader["gender"]);
+                        tempemployee.BirthDate = Convert.ToDateTime(reader["birth_date"]);
+                        result.Add(tempemployee);
+                    }
+                }
+            }
+            
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -33,7 +66,38 @@ namespace dao_exercises.DAL
         /// <returns>A list of employees that match the search.</returns>
         public IList<Employee> Search(string firstname, string lastname)
         {
-            throw new NotImplementedException();
+            List<Employee> result = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand(SQL_FindEmployees, connection);
+                    cmd.Parameters.AddWithValue("@firstname", "%" + firstname + "%");
+                    cmd.Parameters.AddWithValue("@lastname", "%" + lastname + "%");
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee tempemployee = new Employee();
+                        tempemployee.EmployeeId = Convert.ToInt32(reader["employee_id"]);
+                        tempemployee.FirstName = Convert.ToString(reader["first_name"]);
+                        tempemployee.LastName = Convert.ToString(reader["last_name"]);
+                        tempemployee.JobTitle = Convert.ToString(reader["job_title"]);
+                        tempemployee.Gender = Convert.ToString(reader["gender"]);
+                        tempemployee.BirthDate = Convert.ToDateTime(reader["birth_date"]);
+                        result.Add(tempemployee);
+                    }
+                }
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -42,7 +106,38 @@ namespace dao_exercises.DAL
         /// <returns></returns>
         public IList<Employee> GetEmployeesWithoutProjects()
         {
-            throw new NotImplementedException();
+            List<Employee> result = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand(SQL_EmployeesNoProjects, connection);
+                    //cmd.Parameters.AddWithValue("@firstname", "%" + firstname + "%");
+                    //cmd.Parameters.AddWithValue("@lastname", "%" + lastname + "%");
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee tempemployee = new Employee();
+                        tempemployee.EmployeeId = Convert.ToInt32(reader["employee_id"]);
+                        tempemployee.FirstName = Convert.ToString(reader["first_name"]);
+                        tempemployee.LastName = Convert.ToString(reader["last_name"]);
+                        tempemployee.JobTitle = Convert.ToString(reader["job_title"]);
+                        tempemployee.Gender = Convert.ToString(reader["gender"]);
+                        tempemployee.BirthDate = Convert.ToDateTime(reader["birth_date"]);
+                        result.Add(tempemployee);
+                    }
+                }
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
         }
     }
 }

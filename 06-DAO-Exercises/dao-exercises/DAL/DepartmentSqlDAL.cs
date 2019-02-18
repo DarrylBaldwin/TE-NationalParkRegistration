@@ -9,7 +9,7 @@ namespace dao_exercises.DAL
     class DepartmentSqlDAL
     {
         private string connectionString;
-        private const string SQL_GetDepartments = "SELECT * FROM department";
+        private const string SQL_GetDepartments = "SELECT * FROM department ORDER BY department_id";
         private const string SQL_UpdateDepartment = @"UPDATE department SET name = (@name) WHERE department_id = (@department_id)";
         private const string SQL_CreateDepartment = @"INSERT INTO department (name) VALUES (@name)";
 
@@ -75,16 +75,6 @@ namespace dao_exercises.DAL
                     {
                         result = 1;
                     }
-
-                    //cmd = new SqlCommand(SQL_CheckDepartment);
-                    //cmd.Parameters.AddWithValue("@id", newDepartment.Name);
-                    //SqlDataReader reader = cmd.ExecuteReader();
-
-                    //while (reader.Read())
-                    //{
-                    //    newDepartment.Id = Convert.ToInt32(reader["department_id"]);
-                    //}
-                    //result = newDepartment.Id;
                 }
             }
             catch (Exception ex)
