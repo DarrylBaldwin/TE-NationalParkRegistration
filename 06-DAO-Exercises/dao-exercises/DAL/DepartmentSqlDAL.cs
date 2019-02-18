@@ -9,9 +9,9 @@ namespace dao_exercises.DAL
     class DepartmentSqlDAL
     {
         private string connectionString;
-        private const string SQL_GetDepartsment = "SELECT * FROM department";
+        private const string SQL_GetDepartments = "SELECT * FROM department";
         private const string SQL_CheckDepartment = "SELECT id FROM department WHERE name = @newDepartment;";
-        private const string SQL_CreateDepartment = @"INSERT INTO department (name) VALUES (@newDepartment);";
+        private const string SQL_CreateDepartment = @"INSERT INTO department (name) VALUES (@name)";
 
         // Single Parameter Constructor
         public DepartmentSqlDAL(string dbConnectionString)
@@ -32,7 +32,7 @@ namespace dao_exercises.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand(SQL_GetDepartsment, connection);
+                    SqlCommand cmd = new SqlCommand(SQL_GetDepartments, connection);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     while (reader.Read())
@@ -55,33 +55,45 @@ namespace dao_exercises.DAL
         /// <summary>
         /// Creates a new department.
         /// </summary>
-        /// <param name="newDepartment">The department object.</param>
+        ///// <param name="newDepartment">The department object.</param>
         /// <returns>The id of the new department (if successful).</returns>
         public int CreateDepartment(Department newDepartment)
         {
+            int result = 0;
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    SqlCommand cmd = new SqlCommand(SQL_CreateDepartment);
+                    SqlCommand cmd = new SqlCommand(SQL_CreateDepartment, connection);
+                    cmd.Parameters.AddWithValue("@department_id", newDepartment.Id);
                     cmd.Parameters.AddWithValue("@name", newDepartment.Name);
 
-                    cmd = new SqlCommand(SQL_CheckDepartment);
-                    cmd.Parameters.AddWithValue("@id", newDepartment.Name);
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    int count = cmd.ExecuteNonQuery();
 
-                    while (reader.Read())
+                    if (count > 0)
                     {
-                        newDepartment.Id = Convert.ToInt32(reader["department_id"]);
+                        result = 1;
                     }
+
+                    //cmd = new SqlCommand(SQL_CheckDepartment);
+                    //cmd.Parameters.AddWithValue("@id", newDepartment.Name);
+                    //SqlDataReader reader = cmd.ExecuteReader();
+
+                    //while (reader.Read())
+                    //{
+                    //    newDepartment.Id = Convert.ToInt32(reader["department_id"]);
+                    //}
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
                 throw;
             }
 
-            return newDepartment.Id;
+            return result;
         }
 
         /// <summary>
