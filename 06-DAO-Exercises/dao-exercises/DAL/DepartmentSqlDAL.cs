@@ -11,7 +11,7 @@ namespace dao_exercises.DAL
         private string connectionString;
         private const string SQL_GetDepartments = "SELECT * FROM department ORDER BY department_id";
         private const string SQL_UpdateDepartment = @"UPDATE department SET name = (@name) WHERE department_id = (@department_id);";
-        private const string SQL_CreateDepartment = @"INSERT INTO department (name) VALUES (@name); SELECT CAST(SCOPE_IDENTITY() as int);";
+        private const string SQL_CreateDepartment = "INSERT INTO department (name) VALUES (@name); SELECT CAST(SCOPE_IDENTITY() as int);";
 
         // Single Parameter Constructor
         public DepartmentSqlDAL(string dbConnectionString)
@@ -66,7 +66,6 @@ namespace dao_exercises.DAL
                 {
                     connection.Open();
                     SqlCommand cmd = new SqlCommand(SQL_CreateDepartment, connection);
-                    cmd.Parameters.AddWithValue("@department_id", newDepartment.Id);
                     cmd.Parameters.AddWithValue("@name", newDepartment.Name);
 
                     result = (int)cmd.ExecuteScalar();
