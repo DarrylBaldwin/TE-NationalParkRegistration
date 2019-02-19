@@ -15,6 +15,7 @@ namespace dao_exercises.test.DAL
         private TransactionScope tran;
         const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=EmployeeDB;Integrated Security=True";
         private int id;
+        
 
         [TestInitialize]
         public void Initialize()
@@ -26,8 +27,8 @@ namespace dao_exercises.test.DAL
                 conn.Open();
                 SqlCommand cmd;
 
-                cmd = new SqlCommand("INSERT INTO department (name) VALUES ('TestDepartment');", conn);
-                cmd.ExecuteNonQuery();
+                cmd = new SqlCommand("INSERT INTO department (name) VALUES ('TestDepartment'); SELECT CAST(SCOPE_IDENTITY() as int)", conn);
+                id = (int)cmd.ExecuteScalar();
             }
         }
 
@@ -58,11 +59,21 @@ namespace dao_exercises.test.DAL
         {
             DepartmentSqlDAL departmentDAL = new DepartmentSqlDAL(connectionString);
             Department department = new Department();
-            department.Id = 10;
-            department.Name = "TestDepartment";
+            department.Name = "Brand New Dept";
+            int otherID = departmentDAL.CreateDepartment(department);
 
-            int result = departmentDAL.CreateDepartment(department);
-            Assert.AreEqual(10, result);
+            Assert.AreEqual(id + 1, otherID);
+        }
+
+        [TestMethod()]
+        public void UpdateDepartmentTest()
+        {
+            DepartmentSqlDAL departmentSqlDAL = new DepartmentSqlDAL(connectionString);
+            Department department = new Department();
+            department.Name = "TestDepartment";
+            department.Id = id;
+            bool result = departmentSqlDAL.UpdateDepartment(department);
+            Assert.AreEqual(true, result);
         }
     }
 }
