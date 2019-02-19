@@ -12,6 +12,8 @@ namespace dao_exercises.DAL
         private string connectionString;
         private const string SQL_GetAllProjects = ("SELECT * FROM project");
         private const string SQL_CreateProject = ("INSERT INTO project (name, from_date, to_date) VALUES (@name, @from_date, @to_date)");
+        private const string SQL_AssignEmployeetoProject = ("INSERT INTO project_employee (project_id, employee_id) VALUES (@project_id, @employee_id);");
+        private const string SQL_RemoveEmployeetoProject = ("DELETE FROM project_employee WHERE project_id = @project_id AND employee_id = @employee_id;");
 
         // Single Parameter Constructor
         public ProjectSqlDAL(string dbConnectionString)
@@ -63,7 +65,27 @@ namespace dao_exercises.DAL
         /// <returns>If it was successful.</returns>
         public bool AssignEmployeeToProject(int projectId, int employeeId)
         {
-            throw new NotImplementedException();
+            bool result = false;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(SQL_AssignEmployeetoProject, conn);
+                    cmd.Parameters.AddWithValue("@project_id", projectId);
+                    cmd.Parameters.AddWithValue("@employee_id", employeeId);
+                    cmd.ExecuteNonQuery();
+
+                    result = true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -74,7 +96,26 @@ namespace dao_exercises.DAL
         /// <returns>If it was successful.</returns>
         public bool RemoveEmployeeFromProject(int projectId, int employeeId)
         {
-            throw new NotImplementedException();
+            bool result = false;
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand(SQL_RemoveEmployeetoProject, connection);
+                    cmd.Parameters.AddWithValue("@project_id", projectId);
+                    cmd.Parameters.AddWithValue("@employee_id", employeeId);
+                    cmd.ExecuteNonQuery();
+                    result = true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+
+            return result;
         }
 
         /// <summary>

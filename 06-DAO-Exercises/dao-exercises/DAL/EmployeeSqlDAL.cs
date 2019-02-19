@@ -11,7 +11,7 @@ namespace dao_exercises.DAL
         private string connectionString;
         private const string SQL_GetEmployees = "SELECT * FROM employee";
         private const string SQL_FindEmployees = "SELECT * FROM employee WHERE first_name LIKE @firstname AND last_name LIKE @lastname";
-        private const string SQL_EmployeesNoProjects = "SELECT * FROM project_employee RIGHT JOIN employee ON employee.employee_id = project_employee.employee_id WHERE @project_employee.project_id IS NULL";
+        private const string SQL_EmployeesNoProjects = @"SELECT employee.employee_id, employee.first_name, employee.last_name, employee.job_title, employee.birth_date, employee.gender FROM project_employee RIGHT JOIN employee ON employee.employee_id = project_employee.employee_id WHERE project_employee.project_id IS NULL";
 
         // Single Parameter Constructor
         public EmployeeSqlDAL(string dbConnectionString)
@@ -114,8 +114,6 @@ namespace dao_exercises.DAL
                 {
                     connection.Open();
                     SqlCommand cmd = new SqlCommand(SQL_EmployeesNoProjects, connection);
-                    //cmd.Parameters.AddWithValue("@firstname", "%" + firstname + "%");
-                    //cmd.Parameters.AddWithValue("@lastname", "%" + lastname + "%");
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     while (reader.Read())
