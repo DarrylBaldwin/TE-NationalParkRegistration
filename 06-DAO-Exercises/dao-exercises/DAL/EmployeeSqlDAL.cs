@@ -11,11 +11,7 @@ namespace dao_exercises.DAL
         private string connectionString;
         private const string SQL_GetEmployees = "SELECT * FROM employee";
         private const string SQL_FindEmployees = "SELECT * FROM employee WHERE first_name LIKE @firstname AND last_name LIKE @lastname";
-<<<<<<< HEAD
-        private const string SQL_EmployeesNoProjects = @"SELECT first_name, last_name FROM project_employee RIGHT JOIN employee ON employee.employee_id = project_employee.employee_id WHERE employee.employee_id IS NULL";
-=======
         private const string SQL_EmployeesNoProjects = @"SELECT employee.employee_id, employee.first_name, employee.last_name, employee.job_title, employee.birth_date, employee.gender FROM project_employee RIGHT JOIN employee ON employee.employee_id = project_employee.employee_id WHERE project_employee.project_id IS NULL";
->>>>>>> ef7fef28443724a4b826c779d3239952a64bdba4
 
         // Single Parameter Constructor
         public EmployeeSqlDAL(string dbConnectionString)
