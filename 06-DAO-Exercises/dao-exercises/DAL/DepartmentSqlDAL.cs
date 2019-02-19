@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace dao_exercises.DAL
 {
-    class DepartmentSqlDAL
+    public class DepartmentSqlDAL
     {
         private string connectionString;
         private const string SQL_GetDepartments = "SELECT * FROM department ORDER BY department_id";
