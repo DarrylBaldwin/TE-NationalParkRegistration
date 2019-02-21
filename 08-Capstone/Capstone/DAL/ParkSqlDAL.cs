@@ -37,9 +37,9 @@ namespace Capstone.DAL
                 throw;
             }
             return names;
-        } 
+        }
 
-        private List<Park> GetParkInfo(string name)
+        public List<Park> GetParkInfo(string name)
         {
             List<Park> parks = new List<Park>();
             try

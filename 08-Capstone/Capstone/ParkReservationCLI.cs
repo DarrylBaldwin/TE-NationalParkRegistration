@@ -17,14 +17,51 @@ namespace Capstone
             {
                 Console.WriteLine($"{i + 1}) {parks[i]}");
             }
-            Console.WriteLine("Q) quit");
+            Console.WriteLine("Q) Quit");
             bool validInput = false;
+            string userInput = "";
 
             do
             {
-                Console.WriteLine("Enter choice");
+                Console.WriteLine("\nEnter choice (1, 2, 3, 4, Q)");
+                userInput = Console.ReadLine();
+
+                if (userInput == "1" || userInput == "2" || userInput == "3" || userInput == "4" || userInput == "Q")
+                {
+                    validInput = true;
+                }
+                else
+                {
+                    Console.WriteLine("Not a valid input. Please try again.");
+                }
             } while (validInput == false);
+            if (userInput == "1" || userInput == "2" || userInput == "3")
+            {
+            DisplayParkInformation(parks[Convert.ToInt32(userInput)]);           
+            }            
+
+            switch (userInput)
+            {
+                case "1":
+                    ViewCampgroundsMethod();
+                    break;
+                
+
+                default:
+                    break;
+            }
             Console.ReadLine();
+        }
+        public void DisplayParkInformation(string name)
+        {
+            ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
+            parkSqlDAL.GetParkInfo(name);
+
+        }
+
+        public void ViewCampgroundsMethod()
+        {
+
         }
     }
 }
