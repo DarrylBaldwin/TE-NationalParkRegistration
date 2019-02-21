@@ -39,9 +39,9 @@ namespace Capstone.DAL
             return names;
         }
 
-        public List<Park> GetParkInfo(string name)
+        public Park GetParkInfo(string name)
         {
-            List<Park> parks = new List<Park>();
+            Park park = new Park();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -53,7 +53,6 @@ namespace Capstone.DAL
 
                     while (reader.Read())
                     {
-                        Park park = new Park();
                         park.Parkid = Convert.ToInt32(reader["park_id"]);
                         park.Name = Convert.ToString(reader["name"]);
                         park.Location = Convert.ToString(reader["location"]);
@@ -61,8 +60,6 @@ namespace Capstone.DAL
                         park.Area = Convert.ToInt32(reader["area"]);
                         park.AnnualVisitorCount = Convert.ToInt32(reader["visitors"]);
                         park.Description = Convert.ToString(reader["description"]);
-
-                        parks.Add(park);
                     }
                 }
             }
@@ -70,7 +67,7 @@ namespace Capstone.DAL
             {
                 throw;
             }
-            return parks;
+            return park;
         }
     }
 }
