@@ -30,13 +30,13 @@ namespace Capstone.Tests
 
 
         [TestMethod]
-        public void m()
+        public void SearchForReservationTest()
         {
             
         }
 
         [TestMethod]
-        public void G()
+        public void BookReservationTest()
         {
 
         }
