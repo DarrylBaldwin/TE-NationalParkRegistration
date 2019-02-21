@@ -1,4 +1,4 @@
---CREATE DATABASE NationalParkReservation
+CREATE DATABASE NationalParkReservation
 
 DROP TABLE reservation;
 DROP TABLE site;
