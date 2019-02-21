@@ -11,16 +11,18 @@ namespace Capstone
         {
             Console.WriteLine("View Parks Interface");
             Console.WriteLine("Select Park For Further Details");
+
             ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
             List<string> parks = parkSqlDAL.GetParkName();
+
             for (int i = 0; i < parks.Count; i++)
             {
                 Console.WriteLine($"{i + 1}) {parks[i]}");
             }
             Console.WriteLine("Q) Quit");
+
             bool validInput = false;
             string userInput = "";
-
             do
             {
                 Console.WriteLine("\nEnter choice (1, 2, 3, 4, Q)");
