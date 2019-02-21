@@ -41,11 +41,14 @@ namespace Capstone.Tests
         [TestMethod]
         public void GetParkInfoTest()
         {
-            //List<Park> parks = new List<Park>();
-            //ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
-            //parks = parkSqlDAL.GetParkInfo("Acadia");
-            //Assert.IsNotNull(parks);
-            
+
+            Park test = new Park();
+            string name = "Acadia";
+            ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
+            test = parkSqlDAL.GetParkInfo(name);
+            Assert.IsNotNull(test);
+            Assert.AreEqual("Acadia", test.Name);
+
         }
     }
 }

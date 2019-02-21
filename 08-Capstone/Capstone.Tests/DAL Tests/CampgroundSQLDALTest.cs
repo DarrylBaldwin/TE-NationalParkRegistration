@@ -30,15 +30,11 @@ namespace Capstone.Tests
 
 
         [TestMethod]
-        public void GetParkName()
+        public void GetCampgroundsTest()
         {
-
-        }
-
-        [TestMethod]
-        public void GetParkInfoTest()
-        {
-
+            CampgroundSqlDAL campgroundSqlDAL = new CampgroundSqlDAL();
+            string name = "Acadia";
+            List<Campground> test = campgroundSqlDAL.GetCampgrounds(name);
         }
     }
 }

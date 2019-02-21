@@ -30,15 +30,9 @@ namespace Capstone.Tests
 
 
         [TestMethod]
-        public void GetParkName()
+        public void GetCampsiteIntoTest()
         {
-
-        }
-
-        [TestMethod]
-        public void GetParkInfoTest()
-        {
-
+            //get list of campsites in campground in park to user
         }
     }
 }
