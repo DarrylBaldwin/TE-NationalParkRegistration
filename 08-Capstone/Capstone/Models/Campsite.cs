@@ -7,9 +7,11 @@ namespace Capstone.Models
     public class Campsite
     {
         public int CampsiteId { get; set; }
-        public string Name { get; set; }
         public int SiteNumber { get; set; }
         public int MaxOccupancy { get; set; }
+        public byte Accessible { get; set; }
+        public int MaxRvLength { get; set; }
+        public byte Utilities { get; set; }
 
         public override string ToString()
         {
