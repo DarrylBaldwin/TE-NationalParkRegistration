@@ -163,7 +163,7 @@ namespace Capstone
 
         //TODO View all reservation in a given park (BONUS)
         public void ViewParkWideReservations(string name)
-<<<<<<< HEAD
+
         {
 
         }
@@ -173,30 +173,6 @@ namespace Capstone
 
         }
 
-        public void PrintTitleScreen(string name)
-=======
->>>>>>> b319de2d7569063d71c7ef995d0c70f817ba1577
-        {
-
-        }
-
-<<<<<<< HEAD
-        public List<string> ReformatLargeText(string orignalText)
-        {
-            List<string> parts = new List<string>();
-            int partLength = 30;
-
-            string[] pieces = orignalText.Split(' ');
-            StringBuilder tempString = new StringBuilder("");
-
-            foreach (var piece in pieces)
-            {
-                if (piece.Length + tempString.Length + 1 > partLength)
-                {
-                    parts.Add(tempString.ToString());
-                    tempString.Clear();
-                }
-=======
         public void SearchCampgroundReservations(string park, string campground)
         {
             bool validInput = false;
@@ -238,12 +214,12 @@ namespace Capstone
         }
 
         public void PrintTitleScreen(string name)
-        {
-            string dashes = new string('-', name.Length + 2);
-            Console.WriteLine(dashes);
-            Console.WriteLine(" " + name);
-            Console.WriteLine(dashes);
-        }
+                {
+                    string dashes = new string('-', name.Length + 2);
+                    Console.WriteLine(dashes);
+                    Console.WriteLine(" " + name);
+                    Console.WriteLine(dashes);
+                }
 
         public List<string> ReformatLargeText(string orignalText)
         {
@@ -260,7 +236,7 @@ namespace Capstone
                     parts.Add(tempString.ToString());
                     tempString.Clear();
                 }
->>>>>>> b319de2d7569063d71c7ef995d0c70f817ba1577
+
                 tempString.Append(piece + " ");
             }
 
