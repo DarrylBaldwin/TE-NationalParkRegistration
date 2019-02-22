@@ -44,6 +44,7 @@ namespace Capstone
                 ParkMenu(parks[Convert.ToInt32(userInput) - 1]);
             }
 
+            Console.WriteLine("END!!");
             Console.ReadLine();
         }
 
@@ -100,24 +101,24 @@ namespace Capstone
             Console.WriteLine("Established:".PadRight(17) + park.EstablishDate.ToString("yyyy-MM-dd"));
             Console.WriteLine("Area:".PadRight(17) + park.Area.ToString("N0") + (" acres"));
             Console.WriteLine("Annual Visitors:".PadRight(17) + park.AnnualVisitorCount.ToString("N0"));
-            Console.Write("Description:".PadRight(17));
+            Console.WriteLine("Description:".PadRight(17));
             List<string> description = ReformatLargeText(park.Description);
             for (int i = 0; i < description.Count; i++) {
                 if (i == 0)
                 {
                     Console.WriteLine(description[i]);
                 }
-                Console.WriteLine(" ".PadRight(17) + description[i]);
+                Console.WriteLine(description[i]);
             }
         }
 
-        public void ViewCampgrounds(string name)
+        public void ViewCampgrounds(string park)
         {
             CampgroundSqlDAL campgroundSqlDAL = new CampgroundSqlDAL();
 
-            List<Campground> campgrounds = campgroundSqlDAL.GetCampgrounds(name);
+            List<Campground> campgrounds = campgroundSqlDAL.GetCampgrounds(park);
             Console.WriteLine();
-            PrintTitleScreen(name + " Campgrounds");
+            PrintTitleScreen(park + " Campgrounds");
             Console.WriteLine("".PadRight(5) + "name".PadRight(32) + "open".PadRight(11) + "close".PadRight(11) + "daily fee");
 
             for (int i = 0; i < campgrounds.Count; i++)
@@ -128,6 +129,30 @@ namespace Capstone
                     campgrounds[i].ClosingMonth.ToString().PadRight(11) +
                     campgrounds[i].DailyFee.ToString("C2"));
             }
+            
+            int campgroundSelection = 0;
+            bool validinput = false;
+            do
+            {
+                Console.WriteLine("\nWhich campground (enter 0 to cancel): ");
+                string userInput = Console.ReadLine();
+
+                if (int.TryParse(userInput, out campgroundSelection))
+                {
+                    if (campgroundSelection >= 0 && campgroundSelection <= campgrounds.Count)
+                    {
+                        validinput = true;
+                    }
+                }
+
+                if (validinput == false) { Console.WriteLine("Not a valid input. Please try again."); }
+                
+            } while (validinput == false);
+
+            if (campgroundSelection == 0) { return; }
+
+            else { SearchCampgroundReservations(park, campgrounds[campgroundSelection - 1].Name); }
+                    
         }
 
         //TODO Search Fo Reservation Park Wide (BONUS)
@@ -142,9 +167,44 @@ namespace Capstone
 
         }
 
-        public void SearchCampgroundReservations(string name)
+        public void SearchCampgroundReservations(string park, string campground)
         {
+            bool validInput = false;
+            DateTime arrivalDate = DateTime.MinValue;
+            DateTime departureDate = DateTime.MinValue;
+            do
+            {
+                Console.WriteLine("What is the arrival date? (dd/mm/yyyy) ");
+                string input = Console.ReadLine();
+                try
+                {
+                    arrivalDate = DateTime.Parse(input);
+                    validInput = true;
+                }
+                catch 
+                {
+                    Console.WriteLine("Invalid Input (dd/mm/yyyy)");
+                }
+            } while (validInput == false);
 
+            validInput = false;
+            do
+            {
+                Console.WriteLine("What is the departure date? (dd/mm/yyyy) ");
+                string input = Console.ReadLine();
+                try
+                {
+                    departureDate = DateTime.Parse(input);
+                    validInput = true;
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid Input (dd/mm/yyyy)");
+                }
+            } while (validInput == false);
+
+            ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
+            List<Reservation> reservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
         }
 
         public void PrintTitleScreen(string name)
@@ -158,7 +218,7 @@ namespace Capstone
         public List<string> ReformatLargeText(string orignalText)
         {
             List<string> parts = new List<string>();
-            int partLength = 30;
+            int partLength = 35;
 
             string[] pieces = orignalText.Split(' ');
             StringBuilder tempString = new StringBuilder("");
