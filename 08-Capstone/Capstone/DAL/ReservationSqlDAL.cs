@@ -11,9 +11,9 @@ namespace Capstone.DAL
         private string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog = NationalParkReservation; Integrated Security = True";
         private const string SQL_SearchForReservation = "";
 
-        public List<Reservation> SearchForReservation(string park, string campground, DateTime arrivalDate, DateTime departureDate)
+        public List<Campsite> SearchForReservation(string park, string campground, DateTime arrivalDate, DateTime departureDate)
         {
-            List<Reservation> reservations = new List<Reservation>();
+            List<Campsite> campsites = new List<Campsite>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -29,7 +29,7 @@ namespace Capstone.DAL
 
             }
 
-            return reservations;
+            return campsites;
         }
     }
 }
