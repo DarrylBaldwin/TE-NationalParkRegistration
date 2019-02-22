@@ -35,6 +35,7 @@ namespace Capstone.Tests
             CampgroundSqlDAL campgroundSqlDAL = new CampgroundSqlDAL();
             string name = "Acadia";
             List<Campground> test = campgroundSqlDAL.GetCampgrounds(name);
+            Assert.IsNotNull(test);
         }
     }
 }

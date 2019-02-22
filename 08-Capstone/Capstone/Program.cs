@@ -9,7 +9,6 @@ namespace capstone
         {
             ParkReservationCLI cli = new ParkReservationCLI();
             cli.RunCLI();
-         
         }
     }
 }

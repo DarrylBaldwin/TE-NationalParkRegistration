@@ -32,7 +32,9 @@ namespace Capstone.Tests
         [TestMethod]
         public void SearchForReservationTest()
         {
-            
+            List<Reservation> test = new List<Reservation>();
+            ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
+            test = reservationSqlDAL.SearchForReservation(string park, string campground);
         }
 
         [TestMethod]
