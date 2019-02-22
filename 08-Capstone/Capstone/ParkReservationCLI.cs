@@ -210,7 +210,7 @@ namespace Capstone
             } while (validInput == false);
 
             ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
-            List<Reservation> reservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
+            List<Campsite> reservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
         }
 
         public void PrintTitleScreen(string name)
