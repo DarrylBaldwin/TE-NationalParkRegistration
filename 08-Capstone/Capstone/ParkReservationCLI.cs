@@ -76,7 +76,7 @@ namespace Capstone
             switch (userInput)
             {
                 case "1":
-                    ViewCampgrounds(name);
+                    ViewCampgroundsMenu(name);
                     break;
 
                 case "2":
@@ -112,21 +112,21 @@ namespace Capstone
             }
         }
 
-        public void ViewCampgrounds(string park)
+        public void ViewCampgroundsMenu(string park)
         {
             CampgroundSqlDAL campgroundSqlDAL = new CampgroundSqlDAL();
 
             List<Campground> campgrounds = campgroundSqlDAL.GetCampgrounds(park);
             Console.WriteLine();
             PrintTitleScreen(park + " Campgrounds");
-            Console.WriteLine("".PadRight(5) + "name".PadRight(32) + "open".PadRight(11) + "close".PadRight(11) + "daily fee");
+            Console.WriteLine("".PadRight(4) + "Name".PadRight(32) + "Open".PadRight(9) + "Close".PadRight(11) + "Daily fee");
 
             for (int i = 0; i < campgrounds.Count; i++)
             {
-                Console.WriteLine(i + 1 + ")".PadRight(5) +
+                Console.WriteLine(i + 1 + ")".PadRight(3) +
                     campgrounds[i].Name.PadRight(32) +
-                    campgrounds[i].OpenMonth.ToString().PadRight(11) +
-                    campgrounds[i].ClosingMonth.ToString().PadRight(11) +
+                    ReturnMonthName(campgrounds[i].OpenMonth).PadRight(9) +
+                    ReturnMonthName(campgrounds[i].ClosingMonth).PadRight(11) +
                     campgrounds[i].DailyFee.ToString("C2"));
             }
             
@@ -161,18 +161,6 @@ namespace Capstone
 
         }
 
-        //TODO View all reservation in a given park (BONUS)
-        public void ViewParkWideReservations(string name)
-
-        {
-
-        }
-
-        public void SearchCampgroundReservations(string name)
-        {
-
-        }
-
         public void SearchCampgroundReservations(string park, string campground)
         {
             bool validInput = false;
@@ -180,7 +168,7 @@ namespace Capstone
             DateTime departureDate = DateTime.MinValue;
             do
             {
-                Console.WriteLine("What is the arrival date? (dd/mm/yyyy) ");
+                Console.WriteLine("What is the arrival date? (mm/dd/yyyy) ");
                 string input = Console.ReadLine();
                 try
                 {
@@ -189,14 +177,14 @@ namespace Capstone
                 }
                 catch 
                 {
-                    Console.WriteLine("Invalid Input (dd/mm/yyyy)");
+                    Console.WriteLine("Invalid Input (mm/dd/yyyy)");
                 }
             } while (validInput == false);
 
             validInput = false;
             do
             {
-                Console.WriteLine("What is the departure date? (dd/mm/yyyy) ");
+                Console.WriteLine("What is the departure date? (mm/dd/yyyy) ");
                 string input = Console.ReadLine();
                 try
                 {
@@ -205,12 +193,67 @@ namespace Capstone
                 }
                 catch
                 {
-                    Console.WriteLine("Invalid Input (dd/mm/yyyy)");
+                    Console.WriteLine("Invalid Input (mm/dd/yyyy)");
                 }
             } while (validInput == false);
 
             ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
-            List<Campsite> reservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
+            List<Campsite> avaiablereservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
+
+            Console.WriteLine("Results Matching Your Search Criteria");
+            Console.WriteLine("Site No.".PadRight(11) + "Max Occup.".PadRight(11) + "Accessible".PadRight(13) + "Max RV Length".PadRight(15) + "Utility".PadRight(9) + "Cost");
+
+            foreach (Campsite campsite in avaiablereservations)
+            {
+                TimeSpan difference = departureDate - arrivalDate;
+
+                Console.WriteLine(
+                    Convert.ToString(campsite.SiteNumber).PadRight(11) +
+                    Convert.ToString(campsite.MaxOccupancy).PadRight(11) +
+                    Convert.ToString(campsite.Accessible).PadRight(13) +
+                    Convert.ToString(campsite.MaxRvLength).PadRight(15) +
+                    Convert.ToString(campsite.Utilities).PadRight(9) +
+                    (campsite.DailyFee * difference.Days).ToString("C2")
+                    );
+            }
+
+            validInput = false;
+            Campsite selectedCampsite = new Campsite();
+            do
+            {
+                int userinput = 0;
+                try
+                {
+                    Console.WriteLine("Which site should be reserved (enter 0 to cancel): ");
+                    userinput = int.Parse(Console.ReadLine());
+                    if (userinput == 0) { return; }
+                    foreach (Campsite campsite in avaiablereservations)
+                    {
+                        if (campsite.SiteNumber == userinput)
+                        {
+                            validInput = true;
+                            selectedCampsite = campsite;
+                        }
+                    }
+                    if (validInput == false) { Console.WriteLine("Invalid Site Number\n"); }
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine("Invalid Input\n");
+                }
+            } while (validInput == false);
+            Console.WriteLine("What name should the reservation be made under): ");
+            string name = Console.ReadLine();
+            MakeNewReservation(name, selectedCampsite.SiteNumber, arrivalDate, departureDate);
+            
+        }
+
+        public void MakeNewReservation(string name, int campsiteId, DateTime arrivalDate, DateTime departureDate)
+        {
+            ReservationSqlDAL reservationSqlDAl = new ReservationSqlDAL();
+            int reservationId = reservationSqlDAl.MakeReservation(name, campsiteId, arrivalDate, departureDate);
+
+            Console.WriteLine("The reservation has been made and the confirmation id is {0}", reservationId);
         }
 
         public void PrintTitleScreen(string name)
@@ -241,6 +284,25 @@ namespace Capstone
             }
 
             return parts;
+        }
+
+        public string ReturnMonthName(int monthNumber)
+        {
+            Dictionary<int, string> month = new Dictionary<int, string>();
+            month.Add(1, "January");
+            month.Add(2, "February");
+            month.Add(3, "March");
+            month.Add(4, "April");
+            month.Add(5, "May");
+            month.Add(6, "June");
+            month.Add(7, "July");
+            month.Add(8, "August");
+            month.Add(9, "September");
+            month.Add(10, "October");
+            month.Add(11, "November");
+            month.Add(12, "December");
+
+            return month[monthNumber];
         }
     }
 }
