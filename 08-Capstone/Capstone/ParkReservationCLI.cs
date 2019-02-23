@@ -64,8 +64,10 @@ namespace Capstone
                 DisplayParkInformation(name);
                 Console.WriteLine("\nSelect a Command");
                 Console.WriteLine("1) View Campgrounds");
-                Console.WriteLine("2) Search for Reservation");
+                //Console.WriteLine("2) Search for Reservation");
+                Console.WriteLine("2) View Reservation for the next 30 Days");
                 Console.WriteLine("3) Return to Previous Screen");
+
 
                 bool validInput = false;
 
@@ -89,15 +91,19 @@ namespace Capstone
                         ViewCampgroundsMenu(name);
                         break;
 
+                    //case "2":
+                    //    SearchForUpcomingParkReservations(name);
+                    //    break;
+
                     case "2":
-                        SearchForReservation(name);
+                        SearchForParkReservations(name);
                         break;
 
                     case "3":
                         Console.Write("\n");
                         break;
                 }
-            } while (input != "3");
+            } while (input != "4");
         }
 
         public void DisplayParkInformation(string name)
@@ -166,10 +172,38 @@ namespace Capstone
                     
         }
 
-        //TODO Search Fo Reservation Park Wide (BONUS)
-        public void SearchForReservation(string name)
+        public void SearchForUpcomingParkReservations(string name)
         {
 
+        }
+
+        public void SearchForParkReservations(string park)
+        {
+            DateTime today = System.DateTime.Now;
+            DateTime futureMonthDate = today.AddMonths(1);
+            ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
+
+            List<Reservation> reservations = new List<Reservation>();
+            reservations = reservationSqlDAL.GetParkReversations(park, today, futureMonthDate);
+
+            if (reservations.Count != 0) {
+                Console.WriteLine($"\nAll Reservations for {park}:");
+                Console.WriteLine("ID".PadRight(4) + "Site ID".PadRight(9) + "Name".PadRight(32) + "From Date".PadRight(12) + "To Date");
+                foreach (Reservation reservation in reservations)
+                {
+                    Console.WriteLine(
+                        reservation.ReservationId.ToString().PadRight(4) +
+                        reservation.SiteID.ToString().PadRight(9)+
+                        reservation.Name.ToString().PadRight(32) +
+                        reservation.FromDate.ToString("d").PadRight(12) +
+                        reservation.ToDate.Date.ToString("d")
+                        );
+                }
+
+                Console.WriteLine("\nPress <Enter> to continue!");
+                Console.ReadLine();
+            }
+            else { Console.WriteLine($"No Reservations for {park}"); }
         }
 
         public void SearchCampgroundReservations(string park, string campground)

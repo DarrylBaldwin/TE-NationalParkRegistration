@@ -28,6 +28,17 @@ namespace Capstone.DAL
             ON campground.park_id = park.park_id
             WHERE park.name = @park AND campground.name = @campground AND reservation.from_date >= @arrivalDate AND reservation.to_date <= @departureDate); ";
 
+        private const string SQL_SearchForMonthReservations =
+            @"SELECT reservation.*
+            FROM reservation
+            JOIN site
+            ON reservation.site_id = site.site_id
+            JOIN campground
+            ON site.campground_id = campground.campground_id
+            JOIN park
+            ON campground.park_id = park.park_id
+            WHERE park.name = @park AND reservation.from_date >= @currentDate AND reservation.from_date <= @futureMonthDate";
+
         public const string SQL_MakeReservation = "INSERT INTO reservation (site_id, name, from_date, to_date, create_date) VALUES (@site_id, @name, @arrivalDate, @departureDate, @create_date); SELECT CAST(SCOPE_IDENTITY() as int);";
 
         public List<Campsite> SearchForReservation(string park, string campground, DateTime arrivalDate, DateTime departureDate)
@@ -44,8 +55,8 @@ namespace Capstone.DAL
                     cmd.Parameters.AddWithValue("@campground", campground);
                     cmd.Parameters.AddWithValue("@arrivalDate", arrivalDate);
                     cmd.Parameters.AddWithValue("@departureDate", departureDate);
-                    SqlDataReader reader = cmd.ExecuteReader();
 
+                    SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         Campsite campsite = new Campsite();
@@ -68,6 +79,41 @@ namespace Capstone.DAL
             return campsites;
         }
 
+        public List<Reservation> GetParkReversations(string park, DateTime currentDate, DateTime futureMonthDate)
+        {
+            List<Reservation> reservations = new List<Reservation>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(SQL_SearchForMonthReservations, conn);
+                    cmd.Parameters.AddWithValue("@park", park);
+                    cmd.Parameters.AddWithValue("@currentDate", currentDate);
+                    cmd.Parameters.AddWithValue("@futureMonthDate", futureMonthDate);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Reservation reservation = new Reservation();
+                        reservation.ReservationId = Convert.ToInt32(reader["reservation_id"]);
+                        reservation.SiteID = Convert.ToInt32(reader["site_id"]);
+                        reservation.Name = Convert.ToString(reader["name"]);
+                        reservation.FromDate = Convert.ToDateTime(reader["from_date"]);
+                        reservation.ToDate = Convert.ToDateTime(reader["to_date"]);
+                        reservation.CreateDate = Convert.ToDateTime(reader["create_date"]);
+                        reservations.Add(reservation);
+                    }
+                }
+        }
+            catch
+            {
+
+            }
+
+            return reservations;
+        }
+
         public int MakeReservation(string name, int siteid, DateTime arrivalDate, DateTime departureDate)
         {
             int reservationId = 0;
@@ -76,7 +122,7 @@ namespace Capstone.DAL
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    
+
                     SqlCommand cmd = new SqlCommand(SQL_MakeReservation, conn);
                     cmd.Parameters.AddWithValue("@site_id", siteid);
                     cmd.Parameters.AddWithValue("@name", name);
@@ -88,10 +134,11 @@ namespace Capstone.DAL
             }
             catch
             {
-                
+
             }
 
             return reservationId;
         }
+
     }
 }
