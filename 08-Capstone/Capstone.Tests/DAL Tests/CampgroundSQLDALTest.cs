@@ -11,24 +11,6 @@ namespace Capstone.Tests
     public class CampgroundSQLDALTest
     {
 
-        //// Define scope
-        //TransactionScope transaction;
-        //private string connectionString = @"Data Source=.\sqlexpress;Initial Catalog=world;Integrated Security=True";
-
-        //[TestInitialize]
-        //public void Initialize()
-        //{
-
-        //}
-
-        //[TestCleanup]
-        //public void Cleanup()
-        //{
-        //    transaction.Dispose();
-
-        //}
-
-
         [TestMethod]
         public void GetCampgroundsTest()
         {
