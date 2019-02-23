@@ -12,9 +12,5 @@ namespace Capstone.Models
         public int ClosingMonth { get; set; }
         public decimal DailyFee { get; set; }
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
     }
 }
