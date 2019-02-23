@@ -55,7 +55,6 @@ namespace Capstone.Tests
         [TestMethod]
         public void GetParkInfoTest()
         {
-
             Park test = new Park();
             string name = "Fun Park";
             ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
