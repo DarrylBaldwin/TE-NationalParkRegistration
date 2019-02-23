@@ -11,7 +11,7 @@ namespace Capstone.Tests
     [TestClass]
     public class ReservationSQLDALTest
     {
-
+        int testInsert;
         // Define scope
         TransactionScope tran;
         private string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog = NationalParkReservation; Integrated Security = True";
@@ -21,7 +21,6 @@ namespace Capstone.Tests
         {
             // Initialize a new transaction scope. This automatically begins the transaction.
             tran = new TransactionScope();
-
             // Open a SqlConnection object using the active transaction
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -30,7 +29,7 @@ namespace Capstone.Tests
 
                 //Insert a Dummy Record for Country                
                 cmd = new SqlCommand("INSERT INTO reservation (site_id, name, from_date, to_date) VALUES (37, 'Alec', '2019-07-04', '2019-07-24') SELECT CAST(SCOPE_IDENTITY() as int);", conn);
-                cmd.ExecuteNonQuery();
+                testInsert = Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
@@ -59,13 +58,13 @@ namespace Capstone.Tests
         public void MakeReservationTest()
         {
             int result;
-            string name = "Alec";
+            string name = "Alec2";
             int campsiteId = 37;
             DateTime arrivalDate = DateTime.Parse("2019-07-04");
             DateTime departureDate = DateTime.Parse("2019-07-24");
             ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
             result = reservationSqlDAL.MakeReservation(name, campsiteId, arrivalDate, departureDate);
-            Assert.IsNotNull(result);
+            Assert.AreEqual(testInsert + 1, result);
         }
     }
 }
