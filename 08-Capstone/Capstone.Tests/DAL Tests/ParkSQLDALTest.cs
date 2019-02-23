@@ -11,22 +11,35 @@ namespace Capstone.Tests
     public class ParkSQLDALTest
     {
 
-        //// Define scope
-        //TransactionScope transaction;
-        //private string connectionString = @"Data Source=.\sqlexpress;Initial Catalog=world;Integrated Security=True";
+        // Define scope
+        TransactionScope tran;
+        private string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog = NationalParkReservation; Integrated Security = True";
 
-        //[TestInitialize]
-        //public void Initialize()
-        //{
+        [TestInitialize]
+        public void Initialize()
+        {
+            // Initialize a new transaction scope. This automatically begins the transaction.
+            tran = new TransactionScope();
 
-        //}
+            // Open a SqlConnection object using the active transaction
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd;
 
-        //[TestCleanup]
-        //public void Cleanup()
-        //{
-        //    transaction.Dispose();
+                conn.Open();
 
-        //}
+                //Insert a Dummy Record for Park             
+                cmd = new SqlCommand("INSERT INTO park (name, location, establish_date, area, visitors, description) VALUES ('Fun Park', 'Ohio', '2018-08-08', 100000, 5, 'Roller Coasters and Craft Beer')", conn);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            tran.Dispose();
+
+        }
 
 
         [TestMethod]
@@ -36,6 +49,7 @@ namespace Capstone.Tests
             ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
             test = parkSqlDAL.GetParkName();
             Assert.IsNotNull(test);
+            CollectionAssert.Contains(test, "Fun Park");
         }
 
         [TestMethod]
@@ -43,12 +57,11 @@ namespace Capstone.Tests
         {
 
             Park test = new Park();
-            string name = "Acadia";
+            string name = "Fun Park";
             ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
             test = parkSqlDAL.GetParkInfo(name);
             Assert.IsNotNull(test);
-            Assert.AreEqual("Acadia", test.Name);
-
+            Assert.AreEqual("Fun Park", test.Name);
         }
     }
 }
