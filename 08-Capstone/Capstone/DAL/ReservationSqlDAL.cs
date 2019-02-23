@@ -26,7 +26,7 @@ namespace Capstone.DAL
             ON site.campground_id = campground.campground_id
             JOIN park
             ON campground.park_id = park.park_id
-            WHERE park.name = @park AND campground.name = @campground AND reservation.from_date <= @arrivalDate AND reservation.to_date >= @departureDate); ";
+            WHERE park.name = @park AND campground.name = @campground AND reservation.from_date >= @arrivalDate AND reservation.to_date <= @departureDate); ";
 
         public const string SQL_MakeReservation = "INSERT INTO reservation (site_id, name, from_date, to_date, create_date) VALUES (@site_id, @name, @arrivalDate, @departureDate, @create_date); SELECT CAST(SCOPE_IDENTITY() as int);";
 
@@ -49,6 +49,7 @@ namespace Capstone.DAL
                     while (reader.Read())
                     {
                         Campsite campsite = new Campsite();
+                        campsite.SiteId = Convert.ToInt32(reader["site_id"]);
                         campsite.SiteNumber = Convert.ToInt32(reader["site_number"]);
                         campsite.MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]);
                         campsite.Accessible = Convert.ToByte(reader["accessible"]);
@@ -67,7 +68,7 @@ namespace Capstone.DAL
             return campsites;
         }
 
-        public int MakeReservation(string name, int campsiteId, DateTime arrivalDate, DateTime departureDate)
+        public int MakeReservation(string name, int siteid, DateTime arrivalDate, DateTime departureDate)
         {
             int reservationId = 0;
             try
@@ -77,7 +78,7 @@ namespace Capstone.DAL
                     conn.Open();
                     
                     SqlCommand cmd = new SqlCommand(SQL_MakeReservation, conn);
-                    cmd.Parameters.AddWithValue("@site_id", campsiteId);
+                    cmd.Parameters.AddWithValue("@site_id", siteid);
                     cmd.Parameters.AddWithValue("@name", name);
                     cmd.Parameters.AddWithValue("@arrivalDate", arrivalDate);
                     cmd.Parameters.AddWithValue("@departureDate", departureDate);

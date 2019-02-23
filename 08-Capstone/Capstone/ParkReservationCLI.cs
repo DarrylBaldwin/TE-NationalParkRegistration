@@ -174,42 +174,82 @@ namespace Capstone
 
         public void SearchCampgroundReservations(string park, string campground)
         {
+            List<Campsite> avaiablereservations = new List<Campsite>();
             bool validInput = false;
             DateTime arrivalDate = DateTime.MinValue;
             DateTime departureDate = DateTime.MinValue;
+
+            bool SearchReservations = true;
             do
             {
-                Console.Write("What is the arrival date? (mm/dd/yyyy) ");
-                string input = Console.ReadLine();
-                try
+                do
                 {
-                    arrivalDate = DateTime.Parse(input);
-                    validInput = true;
-                }
-                catch 
-                {
-                    Console.WriteLine("Invalid Input (mm/dd/yyyy): ");
-                }
-            } while (validInput == false);
+                    Console.Write("What is the arrival date? (mm/dd/yyyy): ");
+                    string input = Console.ReadLine();
+                    try
+                    {
+                        arrivalDate = DateTime.Parse(input);
+                        validInput = true;
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Invalid Input (mm/dd/yyyy): ");
+                    }
+                } while (validInput == false);
 
-            validInput = false;
-            do
-            {
-                Console.Write("What is the departure date? (mm/dd/yyyy): ");
-                string input = Console.ReadLine();
-                try
+                validInput = false;
+                do
                 {
-                    departureDate = DateTime.Parse(input);
-                    validInput = true;
-                }
-                catch
-                {
-                    Console.WriteLine("Invalid Input (mm/dd/yyyy): ");
-                }
-            } while (validInput == false);
+                    Console.Write("What is the departure date? (mm/dd/yyyy): ");
+                    string input = Console.ReadLine();
+                    try
+                    {
+                        departureDate = DateTime.Parse(input);
+                        validInput = true;
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Invalid Input (mm/dd/yyyy): ");
+                    }
+                } while (validInput == false);
 
-            ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
-            List<Campsite> avaiablereservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
+                ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
+                avaiablereservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
+                if (avaiablereservations.Count == 0)
+                {
+                    Console.WriteLine("No available sites\n");
+                    validInput = false;
+                    do
+                    {
+                        try
+                        {
+                            Console.Write("Would you like to enter another date (Y/N): ");
+                            char anotherSearch;
+                            anotherSearch = Convert.ToChar(Console.ReadLine());
+                            if (char.ToUpper(anotherSearch) == 'Y')
+                            {
+                                validInput = true;
+                                SearchReservations = true;
+                            }
+                            else if (char.ToUpper(anotherSearch) == 'N')
+                            {
+                                validInput = true;
+                                SearchReservations = false;
+                                return;
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine("\nPlease Enter (Y/N)");
+                        }
+                    } while (validInput == false);
+                }
+                else
+                {
+                    SearchReservations = false;
+                }
+            } while (SearchReservations == true);
+
 
             Console.WriteLine("\nResults Matching Your Search Criteria");
             Console.WriteLine("Site No.".PadRight(11) + "Max Occup.".PadRight(11) + "Accessible".PadRight(13) + "Max RV Length".PadRight(15) + "Utility".PadRight(9) + "Cost");
@@ -256,7 +296,7 @@ namespace Capstone
             } while (validInput == false);
             Console.Write("What name should the reservation be made under): ");
             string name = Console.ReadLine();
-            MakeNewReservation(name, selectedCampsite.SiteNumber, arrivalDate, departureDate);
+            MakeNewReservation(name, selectedCampsite.SiteId, arrivalDate, departureDate);
             Console.WriteLine("");
             
         }
