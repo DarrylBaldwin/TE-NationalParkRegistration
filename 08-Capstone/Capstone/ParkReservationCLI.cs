@@ -10,83 +10,94 @@ namespace Capstone
     {
         public void RunCLI()
         {
-            PrintTitleScreen("View Parks Interface");
-            Console.WriteLine("Select Park For Further Details");
-
-            ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
-            List<string> parks = parkSqlDAL.GetParkName();
-
-            for (int i = 0; i < parks.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}) {parks[i]}");
-            }
-            Console.WriteLine("Q) Quit");
-
-            bool validInput = false;
-            string userInput = "";
+            string input = "";
             do
             {
-                Console.Write("\nEnter choice (1, 2, 3, 4, Q): ");
-                userInput = Console.ReadLine();
+                PrintTitleScreen("View Parks Interface");
+                Console.WriteLine("Select Park For Further Details");
 
-                if (userInput == "1" || userInput == "2" || userInput == "3" || userInput == "4" || userInput == "Q")
+                ParkSqlDAL parkSqlDAL = new ParkSqlDAL();
+                List<string> parks = parkSqlDAL.GetParkName();
+
+                for (int i = 0; i < parks.Count; i++)
                 {
-                    validInput = true;
+                    Console.WriteLine($"{i + 1}) {parks[i]}");
                 }
-                else
+                Console.WriteLine("Q) Quit");
+
+                bool validInput = false;
+                int parkSelection = 0;
+                do
                 {
-                    Console.WriteLine("Not a valid input. Please try again.");
-                }
-            } while (validInput == false);
+                    try
+                    {
+                        Console.Write("Park Selection (enter Q to cancel): ");
+                        string userInput = Console.ReadLine();
+                        if (userInput.ToUpper()  == "Q")
+                        {
+                            input = "Q";
+                            return;
+                        }
+                        parkSelection = int.Parse(userInput);
+                        {
+                            if (parkSelection <= parks.Count && parkSelection > 0) { validInput = true; }
+                        }
+                        if (validInput == false) { Console.WriteLine("Invalid Park Number\n"); }
+                    }
+                    catch (FormatException e)
+                    {
+                        Console.WriteLine("Invalid Park Number\n");
+                    }
+                } while (validInput == false);
+                ParkMenu(parks[parkSelection - 1]);
 
-            if (userInput == "1" || userInput == "2" || userInput == "3")
-            {
-                ParkMenu(parks[Convert.ToInt32(userInput) - 1]);
-            }
-
-            Console.WriteLine("END!!");
+            } while (input != "Q");
+           
             Console.ReadLine();
         }
 
         public void ParkMenu(string name)
         {
-            DisplayParkInformation(name);
-            Console.WriteLine("\nSelect a Command");
-            Console.WriteLine("1) View Campgrounds");
-            Console.WriteLine("2) Search for Reservation");
-            Console.WriteLine("3) Return to Previous Screen");
-
-            bool validInput = false;
-            string userInput = "";
-
+            string input = "";
             do
             {
-                Console.Write("\nEnter choice (1, 2, 3): ");
-                userInput = Console.ReadLine();
+                DisplayParkInformation(name);
+                Console.WriteLine("\nSelect a Command");
+                Console.WriteLine("1) View Campgrounds");
+                Console.WriteLine("2) Search for Reservation");
+                Console.WriteLine("3) Return to Previous Screen");
 
-                if (userInput == "1" || userInput == "2" || userInput == "3")
+                bool validInput = false;
+
+                do
                 {
-                    validInput = true;
-                }
-                else
+                    Console.Write("\nEnter choice (1, 2, 3): ");
+                    input = Console.ReadLine();
+
+                    if (input == "1" || input == "2" || input == "3")
+                    {
+                        validInput = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not a valid input. Please try again.");
+                    }
+                } while (validInput == false);
+                switch (input)
                 {
-                    Console.WriteLine("Not a valid input. Please try again.");
+                    case "1":
+                        ViewCampgroundsMenu(name);
+                        break;
+
+                    case "2":
+                        SearchForReservation(name);
+                        break;
+
+                    case "3":
+                        Console.Write("\n");
+                        break;
                 }
-            } while (validInput == false);
-            switch (userInput)
-            {
-                case "1":
-                    ViewCampgroundsMenu(name);
-                    break;
-
-                case "2":
-                    SearchForReservation(name);
-                    break;
-
-                case "3":
-                    break;
-            }
-
+            } while (input != "3");
         }
 
         public void DisplayParkInformation(string name)
@@ -134,7 +145,7 @@ namespace Capstone
             bool validinput = false;
             do
             {
-                Console.WriteLine("\nWhich campground (enter 0 to cancel): ");
+                Console.Write("\nWhich campground (enter 0 to cancel): ");
                 string userInput = Console.ReadLine();
 
                 if (int.TryParse(userInput, out campgroundSelection))
@@ -168,7 +179,7 @@ namespace Capstone
             DateTime departureDate = DateTime.MinValue;
             do
             {
-                Console.WriteLine("What is the arrival date? (mm/dd/yyyy) ");
+                Console.Write("What is the arrival date? (mm/dd/yyyy) ");
                 string input = Console.ReadLine();
                 try
                 {
@@ -177,14 +188,14 @@ namespace Capstone
                 }
                 catch 
                 {
-                    Console.WriteLine("Invalid Input (mm/dd/yyyy)");
+                    Console.WriteLine("Invalid Input (mm/dd/yyyy): ");
                 }
             } while (validInput == false);
 
             validInput = false;
             do
             {
-                Console.WriteLine("What is the departure date? (mm/dd/yyyy) ");
+                Console.Write("What is the departure date? (mm/dd/yyyy): ");
                 string input = Console.ReadLine();
                 try
                 {
@@ -193,14 +204,14 @@ namespace Capstone
                 }
                 catch
                 {
-                    Console.WriteLine("Invalid Input (mm/dd/yyyy)");
+                    Console.WriteLine("Invalid Input (mm/dd/yyyy): ");
                 }
             } while (validInput == false);
 
             ReservationSqlDAL reservationSqlDAL = new ReservationSqlDAL();
             List<Campsite> avaiablereservations = reservationSqlDAL.SearchForReservation(park, campground, arrivalDate, departureDate);
 
-            Console.WriteLine("Results Matching Your Search Criteria");
+            Console.WriteLine("\nResults Matching Your Search Criteria");
             Console.WriteLine("Site No.".PadRight(11) + "Max Occup.".PadRight(11) + "Accessible".PadRight(13) + "Max RV Length".PadRight(15) + "Utility".PadRight(9) + "Cost");
 
             foreach (Campsite campsite in avaiablereservations)
@@ -213,18 +224,19 @@ namespace Capstone
                     Convert.ToString(campsite.Accessible).PadRight(13) +
                     Convert.ToString(campsite.MaxRvLength).PadRight(15) +
                     Convert.ToString(campsite.Utilities).PadRight(9) +
-                    (campsite.DailyFee * difference.Days).ToString("C2")
+                    (campsite.DailyFee * (difference.Days + 1)).ToString("C2")
                     );
             }
 
             validInput = false;
             Campsite selectedCampsite = new Campsite();
+            Console.WriteLine("");
             do
             {
                 int userinput = 0;
                 try
                 {
-                    Console.WriteLine("Which site should be reserved (enter 0 to cancel): ");
+                    Console.Write("Which site should be reserved (enter 0 to cancel): ");
                     userinput = int.Parse(Console.ReadLine());
                     if (userinput == 0) { return; }
                     foreach (Campsite campsite in avaiablereservations)
@@ -242,9 +254,10 @@ namespace Capstone
                     Console.WriteLine("Invalid Input\n");
                 }
             } while (validInput == false);
-            Console.WriteLine("What name should the reservation be made under): ");
+            Console.Write("What name should the reservation be made under): ");
             string name = Console.ReadLine();
             MakeNewReservation(name, selectedCampsite.SiteNumber, arrivalDate, departureDate);
+            Console.WriteLine("");
             
         }
 
