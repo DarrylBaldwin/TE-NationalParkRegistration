@@ -13,9 +13,5 @@ namespace Capstone.Models
         public DateTime ToDate { get; set; }
         public DateTime CreateDate { get; set; }
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
     }
 }

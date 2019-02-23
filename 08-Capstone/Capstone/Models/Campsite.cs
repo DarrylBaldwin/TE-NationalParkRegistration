@@ -14,9 +14,5 @@ namespace Capstone.Models
         public byte Utilities { get; set; }
         public decimal DailyFee { get; set; }
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
     }
 }
